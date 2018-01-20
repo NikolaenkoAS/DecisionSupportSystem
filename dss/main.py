@@ -5,6 +5,8 @@ import wx
 
 from ahpproject import AHPDialog, AHPWindow, AHPProject
 
+from dss.expertproject import AlternativesMaster, ExpertDialog, ExpertProject, ExpertWindow
+
 
 class MainFrame(wx.Frame):
 
@@ -112,7 +114,29 @@ class MainFrame(wx.Frame):
             self.proj_win.Show()
 
     def new_expert(self, event):
-        event.Skip()
+        self.close(None)
+
+        dlg = AlternativesMaster(self)
+
+        if dlg.ShowModal() == wx.ID_CANCEL:
+            return
+
+        alt = dlg.alternatives
+        name = dlg.name
+        target = dlg.target
+
+        dlg = ExpertDialog(self)
+
+        if dlg.ShowModal() == wx.ID_CANCEL:
+            return
+
+        exp = dlg.experts
+
+        self.proj = ExpertProject(alt, exp, name, target)
+        self.proj_win = ExpertWindow(self, self.proj)
+        self.proj_opened = True
+        self.proj_saved = False
+        self.proj_win.Show()
 
     def layout_markov(self, event):
         event.Skip()
@@ -134,11 +158,18 @@ class MainFrame(wx.Frame):
         try:
             if dlg.GetPath():
                 f = open(dlg.GetPath(), "rb")
-                self.proj = pickle.load(f)
+                proj = pickle.load(f)
                 f.close()
 
-                if type(self.proj) == AHPProject:
+                if type(proj) == AHPProject:
+                    self.proj = proj
                     self.proj_win = AHPWindow(self, self.proj)
+                    self.proj_opened = True
+                    self.proj_saved = True
+                    self.proj_win.Show()
+                elif type(proj) == ExpertProject:
+                    self.proj = proj
+                    self.proj_win = ExpertWindow(self, self.proj)
                     self.proj_opened = True
                     self.proj_saved = True
                     self.proj_win.Show()

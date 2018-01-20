@@ -1,5 +1,4 @@
 import operator
-from collections import Iterable
 from fractions import Fraction
 from functools import reduce
 from typing import Union
@@ -163,7 +162,7 @@ class AHPProject(object):
 class AHPDialog(wx.Dialog):
 
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, id=wx.ID_ANY, title=u"Мастер МАИ проэкта", pos=wx.DefaultPosition,
+        wx.Dialog.__init__(self, parent, id=wx.ID_ANY, title=u"Создание проэкта", pos=wx.DefaultPosition,
                            size=wx.Size(556, 384), style=wx.DEFAULT_DIALOG_STYLE)
 
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
@@ -548,7 +547,7 @@ class AHPWindow(wx.Frame):
 
     def accept_close(self, event):
         if self.GetParent():
-            self.GetParent()._accept_save()
+            self.GetParent().close(None)
         else:
             self.Destroy()
 
